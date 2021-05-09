@@ -6,11 +6,7 @@
 .long 0
 .long -(0x1BADB002 + 0)
 
-.section .bss
-.align 16
-stack_bottom:
-.skip 16384
-stack_top:
+
 
 
 .section .text
@@ -21,18 +17,39 @@ _start:
     lgdt [gdt_desc]
     mov ax, 0x10
     mov ss, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
     jmp 0x8:.load_cs
     
 .load_cs:
     
-    
-    lea eax, [cool_str]
+    push 0xF
+    push 0x4
+    call vga_set_color
+    add esp, 0x8
+
+    lea eax, [my_brain_text]
     push eax
     call vga_print
-    pop eax
+    add esp, 0x4
+
+    push 0x4
+    push 0xF
+    call vga_set_color
+    add esp, 0x8
+    
+    lea eax, [hurts_text]
+    push eax
+    call vga_print
+    add esp, 0x4
 
     hlt
 
+my_brain_text:
+.ascii "My brain\n\0"
+hurts_text:
+.ascii "Hurts\n\0"
 
 gdt:
     .long 0x0
@@ -57,5 +74,7 @@ gdt_desc:
     .word (gdt_desc - gdt - 1)
     .long gdt
 
-cool_str:
-.ascii "hello world\0"
+.section .bss
+stack_bottom:
+.skip 16384
+stack_top:

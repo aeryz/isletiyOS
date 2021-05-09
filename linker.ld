@@ -1,14 +1,18 @@
-ENTRY(_start)
+ENTRY(_start) 
 
 SECTIONS
 {
     . = 1M;
 
-    .multiboot : { 
+    .multiboot : ALIGN(4) { 
         *(.multiboot) 
     }
 
     .text : { 
         *(.text) 
+    }
+
+    .bss : {
+        *(.bss)
     }
 }
